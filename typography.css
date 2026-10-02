@@ -1,0 +1,49 @@
+/* One installed font family and standard weights for consistent Vietnamese glyphs. */
+html { font-family: Arial, Helvetica, sans-serif; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+button, input, select, textarea { font-family: inherit; line-height: 1.5; }
+.brand { font-size: 20px; font-weight: 700; letter-spacing: normal; }
+.mark { font-weight: 700; }
+h1 { font-size: 26px; font-weight: 700; line-height: 1.4; letter-spacing: normal; }
+h2 { font-size: 16px; font-weight: 700; line-height: 1.5; }
+.section-label { font-size: 12px; letter-spacing: normal; color: #a5bac4; }
+.nav-item, button, td:nth-child(2) { font-weight: 700; }
+.nav-item { font-size: 13px; font-weight: 400; gap: 9px; }
+.nav-item svg { flex-shrink: 0; }
+.subtitle, .panel-heading p, label, .stat-label { font-size: 13px; line-height: 1.6; }
+.subtitle, .panel-heading p, .stat-label { color: #637680; }
+.stat-value { font-size: 30px; font-weight: 700; line-height: 1.3; letter-spacing: normal; font-variant-numeric: tabular-nums; }
+.stat small, .helper, .footer { font-size: 12px; color: #697d87; line-height: 1.7; }
+.status-strip p { font-size: 13px; line-height: 1.7; }
+th { font-size: 12px; font-weight: 700; letter-spacing: normal; text-transform: none; color: #647984; }
+td { font-size: 13px; line-height: 1.6; }
+td:last-child { font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.6; }
+.result-badge { font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.5; font-weight: 400; }
+.empty strong { font-size: 14px; font-weight: 700; }
+.empty p, .side-bottom { font-size: 13px; }
+.side-bottom strong, .crumb strong, label { font-weight: 400; }
+.sms-cell { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.sms-cell > span { overflow-wrap: anywhere; }
+.copy-code { flex-shrink: 0; font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: 400; padding: 5px 10px; color: #496773; background: #f4f7f8; border: 1px solid #dce5e9; }
+.copy-code:hover { background: #e9f1ee; color: #177965; }
+.creator-credit { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border: 1px solid #e5e9ec; border-radius: 7px; background: #fff; color: #526773; white-space: nowrap; }
+.creator-credit strong { color: #177965; font-weight: 700; }
+.credit-heart { width: 16px; height: 16px; fill: #e65c70; stroke: #e65c70; stroke-width: 1; }
+#market-popup { position: fixed; width: min(440px, calc(100vw - 32px)); padding: 34px; border: 1px solid #dce6e1; border-radius: 14px; color: #192b38; background: #fff; box-shadow: 0 22px 70px #142b3526; font-family: Arial, Helvetica, sans-serif; }
+#market-popup::backdrop { background: #142b3566; backdrop-filter: blur(3px); }
+.market-close { position: absolute; top: 10px; right: 12px; padding: 3px 8px; font-size: 24px; font-weight: 400; color: #71838c; background: transparent; }
+.market-label { display: inline-block; color: #177965; font-size: 11px; font-weight: 700; margin: 8px 0 16px; }
+#market-title { font-size: 24px; margin-bottom: 12px; }
+#market-description { color: #617580; font-size: 14px; line-height: 1.8; margin: 0 0 24px; }
+#market-description a { color: #177965; font-weight: 700; text-decoration: none; }
+.market-actions { display: flex; gap: 10px; align-items: center; }
+.market-actions form { margin: 0; }
+.market-actions button { margin: 0; }
+.market-link { display: inline-flex; gap: 18px; align-items: center; color: #fff; background: #177965; border-radius: 6px; padding: 11px 17px; font-size: 13px; font-weight: 700; text-decoration: none; }
+.market-link:hover { background: #126450; }

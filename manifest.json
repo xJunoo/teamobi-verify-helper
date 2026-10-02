@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "TeaMobi Verify Helper",
+  "version": "1.3.1",
+  "minimum_chrome_version": "120",
+  "description": "Tả tả cái lo^n",
+  "permissions": ["storage", "alarms"],
+  "host_permissions": ["https://my.teamobi.com/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_title": "Mở bảng kết quả TeaMobi"},
+  "content_scripts": [{"matches": ["https://my.teamobi.com/*"], "js": ["content.js"], "run_at": "document_idle"}]
+}
