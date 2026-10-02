@@ -9,6 +9,6 @@
 
 ## Chuyển tài khoản
 
-Tool xóa cookie của `my.teamobi.com` và cookie domain cha `.teamobi.com` áp dụng cho site này, rồi mở lại login; không bấm liên kết đăng xuất. Chỉ xử lý cookie store của tab đang chạy, giữ cookie của website khác. Cookie dùng chung `.teamobi.com` có thể ảnh hưởng phiên trên các subdomain TeaMobi khác. Việc xóa cookie có thể khiến Cloudflare yêu cầu xác minh lại.
+Tool tìm liên kết đăng xuất trong menu profile, đăng xuất rồi mở lại trang login để đổi tài khoản. Nếu menu chưa mở, tool mở profile để tìm liên kết. Không xác nhận được đăng xuất thì dừng để tránh dùng nhầm tài khoản. Extension không xóa cookie trực tiếp và không cần quyền cookies.
 
-Sau khi cập nhật, Reload extension và chấp nhận quyền `cookies` nếu Chrome yêu cầu. Nếu không xóa được cookie hoặc trang vẫn còn phiên cũ, tool dừng thay vì đăng nhập nhầm tài khoản.
+Nút **Clear data** trên dashboard dừng lượt đang chạy, xóa danh sách tài khoản và kết quả trong bộ nhớ extension. Không xóa file TXT hoặc cookie. Reload extension và tải lại dashboard sau khi cập nhật.

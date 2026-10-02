@@ -47,3 +47,7 @@ td:last-child { font-family: Consolas, 'Courier New', monospace; font-size: 13px
 .market-actions button { margin: 0; }
 .market-link { display: inline-flex; gap: 18px; align-items: center; color: #fff; background: #177965; border-radius: 6px; padding: 11px 17px; font-size: 13px; font-weight: 700; text-decoration: none; }
 .market-link:hover { background: #126450; }
+.result-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.result-actions button { margin: 0; }
+.clear-data { color: #a14b4b; border-color: #ebd8d8; }
+.clear-data:hover:not(:disabled) { background: #fff4f4; }

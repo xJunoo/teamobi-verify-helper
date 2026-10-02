@@ -90,6 +90,18 @@ document.querySelector('#start').addEventListener('click', async () => {
 document.querySelector('#stop').addEventListener('click', async () => {
   await send({type: 'STOP'}); await refresh();
 });
+document.querySelector('#clear-data').addEventListener('click', async () => {
+  const button = document.querySelector('#clear-data');
+  button.disabled = true;
+  try {
+    const result = await send({type: 'CLEAR_DATA'});
+    if (!result?.ok) throw new Error('Không xóa được dữ liệu.');
+    document.querySelector('#file').value = '';
+    appendResults([]);
+    await refresh();
+  } catch (error) { statusEl.textContent = error.message; }
+  finally { button.disabled = false; }
+});
 document.querySelector('#download').addEventListener('click', async () => {
   const s = await send({type: 'STATUS'});
   const url = URL.createObjectURL(new Blob(['\uFEFF' + formatResults(s.results)], {type: 'text/plain;charset=utf-8'}));

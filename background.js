@@ -3,23 +3,6 @@ const FORUM = 'https://my.teamobi.com/forum.html';
 const save = state => chrome.storage.session.set({state});
 const load = async () => (await chrome.storage.session.get('state')).state;
 let chain = Promise.resolve();
-async function clearSiteCookies(tabId) {
-  const stores = await chrome.cookies.getAllCookieStores();
-  const store = stores.find(item => item.tabIds.includes(tabId));
-  if (!store) throw new Error('Không tìm thấy cookie store của tab chạy.');
-  const belongsToSite = cookie => {
-    const domain = cookie.domain.replace(/^\./, '').toLowerCase();
-    return domain === 'my.teamobi.com' || (domain === 'teamobi.com' && !cookie.hostOnly);
-  };
-  const list = async () => (await chrome.cookies.getAll({domain: 'teamobi.com', storeId: store.id})).filter(belongsToSite);
-  for (const cookie of await list()) {
-    const details = {url: `https://${cookie.domain.replace(/^\./, '')}${cookie.path}`,
-      name: cookie.name, storeId: store.id};
-    if (cookie.partitionKey) details.partitionKey = cookie.partitionKey;
-    await chrome.cookies.remove(details);
-  }
-  if ((await list()).length) throw new Error('Cookie của site chưa được xóa hết.');
-}
 function loginDestination(url) {
   try {
     const u = new URL(url);
@@ -42,6 +25,11 @@ async function handle(m, sender) {
   } : {active: false, note: 'Chọn file TXT để bắt đầu.'};
   if (m.type === 'STOP' && popup) {
     if (s) { s.active = false; s.accounts = []; s.note = 'Đã dừng; đã xóa danh sách mật khẩu khỏi bộ nhớ extension.'; await save(s); }
+    return {ok: true};
+  }
+  if (m.type === 'CLEAR_DATA' && popup) {
+    await chrome.storage.session.remove('state');
+    await chrome.alarms.clear('teamobi-watchdog');
     return {ok: true};
   }
   if (m.type === 'START' && popup) {
@@ -77,13 +65,15 @@ async function handle(m, sender) {
     s.active = false; s.accounts = []; s.note = note;
     await save(s); return {};
   }
-  async function resetSession() {
-    s.phase = 'reset'; s.since = Date.now(); s.note = 'Đang xóa cookie TeaMobi để đổi tài khoản…';
-    await save(s);
-    try { await clearSiteCookies(s.tabId); }
-    catch { return fail('Không xóa được cookie TeaMobi. Kiểm tra quyền cookies của extension; đã dừng.'); }
+  async function logoutSession() {
+    if (!m.logout) {
+      s.phase = 'findLogout'; s.since = Date.now(); s.note = 'Đang mở menu profile để tìm đăng xuất…';
+      await save(s); return {openProfile: true};
+    }
+    const target = new URL(m.logout);
+    if (target.origin !== new URL(LOGIN).origin) return fail('Liên kết đăng xuất không hợp lệ.');
     delete s.pendingTabId;
-    return navigate(LOGIN, 'reset', 'Đã xóa cookie TeaMobi. Đang mở lại trang login…');
+    return navigate(target.href, 'logout', 'Đang đăng xuất trước khi đổi tài khoản…');
   }
   if (m.loginFailed && ['submitting', 'menu'].includes(s.phase)) {
     s.results.push({index: s.index + 1, user: s.accounts[s.index].user,
@@ -95,7 +85,7 @@ async function handle(m, sender) {
       await save(s); return {};
     }
     s.index++; s.skipHold = false;
-    return resetSession();
+    return navigate(LOGIN, 'login', 'Đã ghi lỗi đăng nhập. Chuyển tài khoản tiếp theo, không thử lại.');
   }
   if (s.phase === 'view') {
     if (Date.now() - s.since < (s.skipHold ? 0 : s.hold * 1000)) return {};
@@ -106,18 +96,20 @@ async function handle(m, sender) {
     }
     s.index++;
     s.skipHold = false;
-    return resetSession();
+    return logoutSession();
   }
   if (s.phase === 'login' && m.auth) {
-    return resetSession();
+    return logoutSession();
   }
-  if (s.phase === 'reset') {
-    if (m.loginForm && !m.auth) {
-      s.phase = 'login'; s.since = Date.now(); await save(s);
-    } else {
-      if (Date.now() - s.since > 300000) return fail('Không mở được form login sau khi xóa cookie. Đã dừng.');
-      return {};
-    }
+  if (s.phase === 'findLogout') {
+    if (m.logout) return logoutSession();
+    if (Date.now() - s.since > 60000) return fail('Không tìm thấy liên kết đăng xuất. Đã dừng.');
+    return {openProfile: true};
+  }
+  if (s.phase === 'logout') {
+    if (!m.auth && (m.loginForm || m.loginLink)) return navigate(LOGIN, 'login', 'Đã đăng xuất. Đang mở form tài khoản tiếp theo…');
+    if (Date.now() - s.since > 60000) return fail('Không xác nhận được đăng xuất. Đã dừng.');
+    return {openProfile: true};
   }
   if (s.phase === 'login') {
     if (!m.loginForm) {
@@ -234,7 +226,7 @@ chrome.alarms.onAlarm.addListener(alarm => {
         await save(s); await chrome.tabs.update(s.tabId, {url: FORUM}); return;
       }
     }
-    if (s.phase !== 'view' && age > (['login', 'reset'].includes(s.phase) ? 300000 : 60000)) {
+    if (s.phase !== 'view' && age > (s.phase === 'login' ? 300000 : 60000)) {
       s.active = false; s.accounts = [];
       s.results.push({index: s.index + 1, status: 'UNVERIFIED'});
       s.note = 'Trang không phản hồi trong thời gian chờ. Đã dừng; không gửi lại login.';
